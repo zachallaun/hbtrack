@@ -1,16 +1,17 @@
-### hbtrack
+## hbtrack
 
-**Installation:**
+#### Installation
 If you trust me:
 ```
 curl https://raw.github.com/zachallaun/hbtrack/master/hbtrack | sudo tee /usr/local/bin/hbtrack 1>&- 2>&-
 ```
 If you don't:
+```
+1. clone this repository
+2. add an alias to .bashrc/.bash_profile/.zshrc
+```
 
-1. Clone
-2. Add an alias
-
-**Usage:**
+#### Usage
 ```
 hbtrack repo [repo ...]
 ```
