@@ -1,15 +1,12 @@
 ## hbtrack
 
 #### Installation
-If you trust me:
 ```
-curl https://raw.github.com/zachallaun/hbtrack/master/hbtrack | sudo tee /usr/local/bin/hbtrack 1>&- 2>&-
+git clone https://github.com/zachallaun/hbtrack && cd hbtrack
+chmod +x hbtrack
+echo "alias hbtrack=$(pwd)/hbtrack" >> ~/.zshrc && source ~/.zshrc
 ```
-If you don't:
-```
-1. clone this repository
-2. add an alias to .bashrc/.bash_profile/.zshrc
-```
+Replace `.zshrc` as necessary.
 
 #### Usage
 ```
