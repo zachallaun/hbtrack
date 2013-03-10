@@ -25,8 +25,9 @@ class Config(object):
                                 if key not in self.data.keys()])
 
     def destroy(self):
-        self.data = {}
-        self._write()
+        if 'y' in raw_input('Remove stored auth information from %s config file?' % self.path).lower():
+            self.data = {}
+            self._write()
 
     def _read(self):
         try:
@@ -116,8 +117,8 @@ def cli():
         if resp.status == 201:
             print "{0}/{1} is being tracked".format(config['gh_username'], repo)
         else:
-            config.destroy()
             sys.stderr.write('Something broke. Bad credentials? GitHub response:\n{}\n'.format(resp.read()))
+            config.destroy()
             sys.exit(1)
 
 if __name__ == '__main__':
