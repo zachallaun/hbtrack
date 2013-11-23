@@ -8,7 +8,6 @@ import sys
 
 from urlparse import urlparse
 from optparse import OptionParser
-from getpass import getpass
 
 class Config(object):
     required_attrs = {'gh_username': 'GitHub username',
@@ -96,7 +95,7 @@ def add_service_hook(hook, username, token, repo, **config):
 
 def verify_config(config):
     for key, name in config.missing_attrs().items():
-        config[key] = getpass("{0}: ".format(name))
+        config[key] = raw_input("{0}: ".format(name))
     return config
 
 def cli():
