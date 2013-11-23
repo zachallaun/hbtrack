@@ -12,7 +12,7 @@ from getpass import getpass
 
 class Config(object):
     required_attrs = {'gh_username': 'GitHub username',
-                      'gh_password': 'GitHub password',
+                      'gh_token': 'GitHub personal access token',
                       'hb_email': 'Humbug email',
                       'hb_api_key': 'Humbug api key'}
 
@@ -71,10 +71,10 @@ def request(method, url, options=None):
     conn.request(method, path, body, headers)
     return conn.getresponse()
 
-def authenticated_post(url, username, password, params=None):
+def authenticated_post(url, username, token, params=None):
     params = params or {}
 
-    encoded_userpass = base64.b64encode('{0}:{1}'.format(username, password))
+    encoded_userpass = base64.b64encode('{0}:{1}'.format(token, ''))
     auth_string = 'Basic {0}'.format(encoded_userpass)
 
     options = {'params': params,
@@ -85,14 +85,14 @@ def authenticated_post(url, username, password, params=None):
 
     return request('POST', url, options)
 
-def add_service_hook(hook, username, password, repo, **config):
+def add_service_hook(hook, username, token, repo, **config):
     url = 'https://api.github.com/repos/{0}/{1}/hooks'.format(username, repo)
 
     params = {'name': hook,
               'active': True,
               'config': config}
 
-    return authenticated_post(url, username, password, json.dumps(params))
+    return authenticated_post(url, username, token, json.dumps(params))
 
 def verify_config(config):
     for key, name in config.missing_attrs().items():
@@ -110,7 +110,7 @@ def cli():
     for repo in args:
         resp = add_service_hook('humbug',
                                 config['gh_username'],
-                                config['gh_password'],
+                                config['gh_token'],
                                 repo,
                                 email=config['hb_email'],
                                 api_key=config['hb_api_key'])
