@@ -5,6 +5,7 @@ import base64
 import json
 import os
 import sys
+import webbrowser
 
 from urlparse import urlparse
 from optparse import OptionParser
@@ -95,6 +96,8 @@ def add_service_hook(hook, username, token, repo, **config):
 
 def verify_config(config):
     for key, name in config.missing_attrs().items():
+        if key == 'gh_token':
+            webbrowser.open_new_tab('https://github.com/settings/tokens/new')
         config[key] = raw_input("{0}: ".format(name))
     return config
 
