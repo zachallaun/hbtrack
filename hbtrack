@@ -3,6 +3,7 @@
 import httplib
 import base64
 import json
+import re
 import os
 import sys
 import webbrowser
@@ -110,19 +111,35 @@ def cli():
     config = verify_config(Config())
 
     for repo in args:
+        if not re.match(r'[a-zA-Z0-9-_.]+$', repo):
+            print 'not a valid github repo name'
+            continue
         resp = add_service_hook('humbug',
                                 config['gh_username'],
                                 config['gh_token'],
                                 repo,
                                 email=config['hb_email'],
                                 api_key=config['hb_api_key'])
+        resp_body = resp.read()
+        repo_name =  "{0}/{1}".format(config['gh_username'], repo)
         if resp.status == 201:
-            print "{0}/{1} is being tracked".format(config['gh_username'], repo)
+            print "{} is being tracked".format(repo_name)
         else:
-            sys.stderr.write('Something broke. Bad credentials? GitHub response:\n{}\n'.format(resp.read()))
-            if 'y' in raw_input('Remove stored authentication?').lower():
-                config.destroy()
-            sys.exit(1)
+            try:
+                resp_params = json.loads(resp_body)
+            except ValueError:
+                print 'no json recieved, got this instead:\n{}\n'.format(resp_body)
+            else:
+                if 'url' in resp_params:
+                    print "looks like {} is already being tracked".format(repo_name)
+                elif resp_params.get('message', 'nope') == 'Not Found':
+                    print "looks like {} doesn't exist on github".format(repo_name)
+                else:
+                    sys.stderr.write('Something broke. Bad credentials? GitHub response:\n{}\n'.format(resp_body))
+                    sys.stderr.flush()
+                    if 'y' in raw_input('Remove stored authentication?').lower():
+                        config.destroy()
+                    sys.exit(1)
 
 if __name__ == '__main__':
     cli()
